@@ -1,109 +1,86 @@
 			
-// POKEMONS
-
+/*Declaracion de variables globales */
 let dades;
-let arrayPokemonsNames = new Array();
-let arrayNamesMunicipis = new Array();
-let arrayNamesMeteorits = new Array();
-let arrayNamesMovies = [];
+let dataObject = {name:"",municipi:"",meteorit:"",movie:""}
+let dataFinal = [];
+let contador = 0;
 
+// METEORITS
+fetch("js/data/earthMeteorites.json")
+.then((response) => response.json())
+.then((data) => {
+	dades = data;		
+	dades.forEach( element => {
+		contador ++
+		dataObject = {
+			meteorit:element.name, //asignamos los valores a la propiedad del objeto
+		} 
+		dataFinal.push(dataObject); //añadimos al array 
+	});
 
+});
+//MUNICIPIS
+fetch("js/data/municipis.json")
+.then((response) => response.json())
+.then((data) => {
+	dades = data.elements;		
+	contador = 0;
+	let municipis = [];
+	dades.forEach(element=> {
+		municipis[contador] = element.municipi_nom;
+		contador++
+	});
+	console.log(municipis.length);
+	for(let i=0; i<municipis.length;i++){
+		dataFinal[i].municipi = municipis[i]; //asignamos los valores a la propiedad del objeto
+	}
+});
 
-function getPokemons(){
+// MOVIES
+fetch("js/data/movies.json")
+.then((response) => response.json())
+.then((data) => {
+	dades = data.movies;	
+	let movie = [];
+	contador = 0;
+	dades.forEach( element => {
+		movie[contador] = element.title;
+		contador++;	
+	});
+	console.log(movie.length);
+	for(let i=0; i<movie.length;i++){
+		dataFinal[i].movie = movie[i]; //asignamos los valores a la propiedad del objeto
+	}
+});
+	
+
 	// POKEMONS
 fetch("js/data/pokemon.json")
 .then((response) => response.json())
 .then((data) => {
 	dades = data.pokemon;	
-	
+	contador =0;
+	let pokemon = [];
 	dades.forEach(element => {
-		arrayPokemonsNames.push(element.name);
-		
+		pokemon[contador] = element.name;
+		contador++;
 	});
-	//console.log(arrayPokemonsNames);
-	//console.log(typeof(dades));
-	//console.log(dades[0].name)
-
-});
-return arrayPokemonsNames;
-}
-
-
-
-function getMunicipis(){
-// MUNICIPIS
-fetch("js/data/municipis.json")
-.then((response) => response.json())
-.then((data) => {
-	dades = data.elements;		
-	
-	dades.forEach(element=> {
-		arrayNamesMunicipis.push(element.municipi_nom);
+	console.log(pokemon.length);
+	for(let i=0; i<pokemon.length;i++){
+		dataFinal[i].pokemon = pokemon[i]; //asignamos los valores a la propiedad del objeto 
 	}
-	);
-	//console.table(arrayNamesMunicipis)
-	//console.log(dades[0].municipi_nom)
-});
-return arrayNamesMunicipis;
-}
-
-
-
-function getMeteoritos(){
-	// METEORITS
-	fetch("js/data/earthMeteorites.json")
-	.then((response) => response.json())
-	.then((data) => {
-		dades = data;		
-		
-		dades.forEach( element => {
-			arrayNamesMeteorits.push(element.name);
-		});
-		//console.table(arrayNamesMeteorits);
-		//console.log(dades)
-		//console.log(dades[0].name)
-	});
-	return arrayNamesMeteorits;
-}
-
-
-
-function getMovies(){
-	// MOVIES
-fetch("js/data/movies.json")
-.then((response) => response.json())
-.then((data) => {
-	dades = data.movies;		
 	
-	dades.forEach( element => {
-		arrayNamesMovies.push(element.title);
-	});
-	//console.table(arrayNamesMovies);
-	//console.log(dades)
-	//console.log(dades[0].title)
+	console.table(dataFinal);
+	
 });
-return arrayNamesMovies;
-}
 
-function objectPadre(pokemon, municipio, meteorito, movie){
-	this.pokemon = pokemon;
-	this.municipio = municipio;
-	this.meteorito = meteorito;
-	this.movie = movie;
-}
 
-function ejecucionMain() {
-    let objetos = [
-        getPokemons(),
-        getMunicipis(),
-        getMeteoritos(),
-        getMovies()
-    ];
+	
 
-	console.log(objetos);
 
-}
 
-ejecucionMain();
+
+
+
 
 
