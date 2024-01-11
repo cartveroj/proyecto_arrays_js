@@ -147,7 +147,27 @@ function orderList(asc){
 	}
 }
 function searchList(){
-
+	let criterio = prompt("Busqueda por nombre, introduzca el criterio: ");
+	let arrayPokemonsMatch = [];
+	if(criterio.length>0){
+		for(let i=0; i<arrayPokemons.length ; i++){
+			let nom = arrayPokemons[i].nom;
+			match = nom.includes(criterio);
+			if(match){
+				console.log(arrayPokemons[i]);
+				arrayPokemonsMatch.push(arrayPokemons[i]);
+				
+			}
+		}
+		if(arrayPokemonsMatch.length >0){
+			printTable(arrayPokemonsMatch);
+		}else{
+			alert("No hay ninguna coincidencia con esos criterios de busqueda");			
+		}
+		
+	}else{
+		alert("Introduzca algún valor de busqueda");
+	}
 }
 function calcMitjana(){
 
@@ -157,13 +177,13 @@ function calcMitjana(){
 		suma += parseInt(arrayPokemons[i].pes);
 	}
 	media = (suma/arrayPokemons.length).toFixed(2);
-	document.getElementById('pesoMedio').innerHTML = media+" "+equivalencia;
+	alert(`La media es: ${media+ equivalencia}`);
 
 }
 function printTable(array){
 let titles = ["id","img","nom","pes"];
 		let tabla = "<table id = \"miTablaPokemons\" border=1>" ;
-	   for (var i = 0; i < array.length; i++) {
+	   for (var i = 0; i< array.length+1; i++) {
 			tabla += `<tr>`;
 			
 			for(let j = 0; j < 4; j++){
