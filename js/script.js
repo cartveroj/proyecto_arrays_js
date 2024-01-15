@@ -1,14 +1,16 @@
-			
+	
 /*Declaracion de variables globales */
 let dades;
 let dataObject = {name:"",municipi:"",meteorit:"",movie:""};
 let dataFinal = [];
 let contador = 0;
 
-let pokemons = {id:"",img:"",nom:"",pes:""};
+let pokemons = {id:"",img:"",nom:"",pes:"", type:""};
 let arrayPokemons = [];
 let equivalencia = "kg";
-
+let arrayPokemonsType = [];
+let arrayPokemonsTypeClean = [];
+let uniqueTypes=[];
 //EJERCICIO 0
 // METEORITS
 fetch("js/data/earthMeteorites.json")
@@ -68,11 +70,13 @@ fetch("js/data/pokemon.json")
 	let pokemon = [];
 	dades.forEach(element => {
 		pokemon[contador] = element.name;
+		arrayPokemonsType.push(element.type);
 		pokemons = {
 			id:element.id,
 			img:element.img,
 			nom:element.name,
-			pes:element.weight.slice(0,element.weight.indexOf("k"))
+			pes:element.weight.slice(0,element.weight.indexOf("k")),
+			type: element.type,
 		}
 		//pokemons = pokemons.pes.slice(0).pokemons.pes.indexOf("k");
 		arrayPokemons.push(pokemons);
@@ -84,9 +88,47 @@ fetch("js/data/pokemon.json")
 	for(let i=0; i<pokemon.length;i++){
 		dataFinal[i].pokemon = pokemon[i]; //asignamos los valores a la propiedad del objeto
 	}
+	for(let e=0; e< arrayPokemons.length; e++){
+		arrayPokemonsType[e] = arrayPokemons[e].type; 
+		
+		//console.log(arrayPokemonsType[e]);
+	}
+	let indice = 0;
+	for(a=0; a< arrayPokemonsType.length; a++){
+		for(e =0; e < arrayPokemonsType[a].length; e++){
+			arrayPokemonsTypeClean[indice] = arrayPokemonsType[a][e];
+			indice++;
+		}
+	}
+		const result = {};
+
+	arrayPokemonsTypeClean.forEach((value) => {
+		console.log(value);
+	result[value] = (result[value] || 0) + 1;
+
+	});
+	console.log(result);
+		
+	uniqueTypes = [... new Set(arrayPokemonsTypeClean)];
+	console.log(uniqueTypes);
+	// let cantidadTypes = [];
+	// let numeroPokemos=0;
+	// for(let b =0; b< uniqueTypes.length; b++){
+	// 	for(let c=0; c < arrayPokemons.length; c++){
+	// 		let match = uniqueTypes[b].includes(arrayPokemons[c].type);
+	// 		console.log(match);
+	// 		if(match){
+	// 			numeroPokemos++;
+	// 			cantidadTypes.push(numeroPokemos);
+	// 		}
+	// 		numeroPokemos=0;
+	// 	}
+	// }
+	// console.log(cantidadTypes);
+	//console.log(arrayPokemonsType[0]);
+	//console.table(dataFinal);
 	
-	console.table(dataFinal);
-	
+
 });
 
 //EJERCICIO 1
@@ -211,6 +253,52 @@ let titles = ["id","img","nom","pes"];
 	  
 		document.getElementById('tablaPokemons').innerHTML = tabla;
 }
+
+//CHART
+
+function quitandoDuplicadosTipo(array){
+	for(let i=0; i<=array.length; i++){
+		for(let e=0; e<= array[i].length; e++){
+			let tipo = array[i][e].type;
+		}
+	}
+}
+
+const data = {
+	labels: [
+	  'Red',
+	  'Green',
+	  'Yellow',
+	  'Grey',
+	  'Blue'
+	],
+	datasets: [{
+	  label: 'My First Dataset',
+	  data: uniqueTypes,
+	  backgroundColor: [
+		'rgb(255, 99, 132)',
+		'rgb(75, 192, 192)',
+		'rgb(255, 205, 86)',
+		'rgb(201, 203, 207)',
+		'rgb(54, 162, 235)'
+	  ]
+	}]
+  };
+new Chart(
+    document.getElementById('myChart'),
+    {
+      type: 'bar',
+      data: {
+        labels: arrayPokemons.map(row => row.pes),
+        datasets: [
+          {
+            label: 'Acquisitions by year',
+            data: arrayPokemons.map(row => row.id)
+          }
+        ]
+      }
+    }
+  );
 
 	
 
