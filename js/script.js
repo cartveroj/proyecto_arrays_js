@@ -23,7 +23,6 @@ fetch("js/data/earthMeteorites.json")
 .then((data) => {
 	dades = data;		
 	dades.forEach( element => {
-		contador ++
 		dataObject = {
 			meteorit:element.name, //asignamos los valores a la propiedad del objeto
 		} 
@@ -36,16 +35,14 @@ fetch("js/data/municipis.json")
 .then((response) => response.json())
 .then((data) => {
 	dades = data.elements;		
-	contador = 0;
 	let municipis = [];
 	dades.forEach(element=> {
-		municipis[contador] = element.municipi_nom;
-		contador++
+		municipis.push(element.municipi_nom);
 	});
-	console.log(municipis.length);
-	for(let i=0; i<municipis.length;i++){
-		dataFinal[i].municipi = municipis[i]; //asignamos los valores a la propiedad del objeto
-	}
+	//console.log(municipis.length);
+	municipis.forEach( municipi => {
+		dataFinal.push(municipi);
+	});
 });
 
 // MOVIES
@@ -53,16 +50,13 @@ fetch("js/data/movies.json")
 .then((response) => response.json())
 .then((data) => {
 	dades = data.movies;	
-	let movie = [];
-	contador = 0;
+	let movies = [];
 	dades.forEach( element => {
-		movie[contador] = element.title;
-		contador++;	
+		movies.push(element.title);
 	});
-	console.log(movie.length);
-	for(let i=0; i<movie.length;i++){
-		dataFinal[i].movie = movie[i]; //asignamos los valores a la propiedad del objeto
-	}
+	movies.forEach(movie => {
+		dataFinal.push(movie);
+	});
 });
 	
 
@@ -71,10 +65,9 @@ fetch("js/data/pokemon.json")
 .then((response) => response.json())
 .then((data) => {
 	dades = data.pokemon;	
-	contador =0;
-	let pokemon = [];
+	let pokemones = [];
 	dades.forEach(element => {
-		pokemon[contador] = element.name;
+		pokemones[contador] = element.name;
 		arrayPokemonsType.push(element.type);
 		pokemons = {
 			id:element.id,
@@ -83,21 +76,17 @@ fetch("js/data/pokemon.json")
 			pes:element.weight.slice(0,element.weight.indexOf("k")),
 			type: element.type,
 		}
-		//pokemons = pokemons.pes.slice(0).pokemons.pes.indexOf("k");
 		arrayPokemons.push(pokemons);
-
-		contador++;
 	});
-	console.log(pokemon.length);
-	
-	for(let i=0; i<pokemon.length;i++){
-		dataFinal[i].pokemon = pokemon[i]; //asignamos los valores a la propiedad del objeto
-	}
-	for(let e=0; e< arrayPokemons.length; e++){
-		arrayPokemonsType[e] = arrayPokemons[e].type; 
-		
-		//console.log(arrayPokemonsType[e]);
-	}
+
+	pokemones.forEach( (pokemon) =>{
+		dataFinal.push(pokemon);
+	});
+
+	arrayPokemons.forEach((arryPok) =>{
+		arrayPokemonsType.push(arryPok);
+	});
+
 	let indice = 0;
 	for(a=0; a< arrayPokemonsType.length; a++){
 		for(e =0; e < arrayPokemonsType[a].length; e++){
@@ -105,6 +94,7 @@ fetch("js/data/pokemon.json")
 			indice++;
 		}
 	}
+	
 	const result = {};
 	arrayPokemonsTypeClean.forEach((value) => {
 	result[value] = (result[value] || 0) + 1;
@@ -125,14 +115,10 @@ fetch("js/data/pokemon.json")
    }
    console.log(borderColor);
 
-   for(let e = 0; e<borderColor.length;e++){
-	backgroundColor[e]= borderColor[e].replace(")", ",0.2)");
-   }
+   borderColor.forEach((color)=>{
+	backgroundColor.push(color.replace(")", ",0.2)"));
+   });
    console.log(backgroundColor);
-
-
-   
-
 });
 
 //EJERCICIO 1
@@ -198,15 +184,11 @@ function searchList(){
 	let criterio = prompt("Busqueda por nombre, introduzca el criterio: ");
 	let arrayPokemonsMatch = [];
 	if(criterio.length>0){
-		for(let i=0; i<arrayPokemons.length ; i++){
-			let nom = arrayPokemons[i].nom;
-			match = nom.includes(criterio);
-			if(match){
-				console.log(arrayPokemons[i]);
-				arrayPokemonsMatch.push(arrayPokemons[i]);
-				
+		arrayPokemons.forEach((pokemon)=>{
+			if(pokemon.nom.includes(criterio)){
+				arrayPokemonsMatch.push(pokemon);
 			}
-		}
+		});
 		if(arrayPokemonsMatch.length >0){
 			printTable(arrayPokemonsMatch);
 		}else{
@@ -217,13 +199,13 @@ function searchList(){
 		alert("Introduzca algún valor de busqueda");
 	}
 }
-function calcMitjana(){
 
+function calcMitjana(){
 	let suma = 0;
 	let media = 0;
-	for(let i=0; i< arrayPokemons.length; i++){
-		suma += parseInt(arrayPokemons[i].pes);
-	}
+	arrayPokemons.forEach((pokemon)=>{
+		suma += parseInt(pokemon.pes);
+	});
 	media = (suma/arrayPokemons.length).toFixed(2);
 	alert(`La media es: ${media+ equivalencia}`);
 
@@ -254,10 +236,8 @@ let titles = ["id","img","nom","pes"];
 			}
 			tabla +=`</tr>`
 	   }
-	
 	   tabla += "</table>"
-	  
-		document.getElementById('tablaPokemons').innerHTML = tabla;
+	   document.getElementById('tablaPokemons').innerHTML = tabla;
 
 	
 }
@@ -282,28 +262,6 @@ function printGrafico(){
 		new Chart(ctx,config);
 }
 
-
-   //CHART
-
-//    const data = {
-// 	labels: arrayLabels,
-// 	datasets: [{
-// 	  label: 'My Pokemons',
-// 	  data: arrayDadesGraf,
-// 	  backgroundColor: backgroundColor,
-// 	  borderColor: borderColor
-// 	}]
-//   };
-
- 
-//   const myChart = new Chart(
-// 	document.getElementById('myChart'),
-// 	 config
-// 	);
-
-
-
-	
 
 
 
