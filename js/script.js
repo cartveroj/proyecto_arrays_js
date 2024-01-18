@@ -10,7 +10,12 @@ let arrayPokemons = [];
 let equivalencia = "kg";
 let arrayPokemonsType = [];
 let arrayPokemonsTypeClean = [];
-let uniqueTypes=[];
+
+
+let arrayLabels=[];
+let arrayDadesGraf = [];
+let backgroundColor=[];
+let borderColor=[];
 //EJERCICIO 0
 // METEORITS
 fetch("js/data/earthMeteorites.json")
@@ -100,34 +105,33 @@ fetch("js/data/pokemon.json")
 			indice++;
 		}
 	}
-		const result = {};
-
+	const result = {};
 	arrayPokemonsTypeClean.forEach((value) => {
-		console.log(value);
 	result[value] = (result[value] || 0) + 1;
-
 	});
-	console.log(result);
+	arrayDadesGraf = Object.values(result);
+	console.log(arrayDadesGraf);
 		
-	uniqueTypes = [... new Set(arrayPokemonsTypeClean)];
-	console.log(uniqueTypes);
-	// let cantidadTypes = [];
-	// let numeroPokemos=0;
-	// for(let b =0; b< uniqueTypes.length; b++){
-	// 	for(let c=0; c < arrayPokemons.length; c++){
-	// 		let match = uniqueTypes[b].includes(arrayPokemons[c].type);
-	// 		console.log(match);
-	// 		if(match){
-	// 			numeroPokemos++;
-	// 			cantidadTypes.push(numeroPokemos);
-	// 		}
-	// 		numeroPokemos=0;
-	// 	}
-	// }
-	// console.log(cantidadTypes);
-	//console.log(arrayPokemonsType[0]);
-	//console.table(dataFinal);
-	
+	arrayLabels = [... new Set(arrayPokemonsTypeClean)];
+	console.log(arrayLabels);
+
+	let rgb = "rgba(rrr,ggg,bbb)";
+   for(let i=0; i< arrayLabels.length;i++){
+	  let rrr= Math.floor(Math.random() * (255 - 0) + 0);
+	  let ggg= Math.floor(Math.random() * (255 - 0) + 0);
+	  let bbb= Math.floor(Math.random() * (255 - 0) + 0);
+	  rgb = `rgba(${rrr},${ggg},${bbb})`;
+	  borderColor[i]=rgb;
+   }
+   console.log(borderColor);
+
+   for(let e = 0; e<borderColor.length;e++){
+	backgroundColor[e]= borderColor[e].replace(")", ",0.2)");
+   }
+   console.log(backgroundColor);
+
+
+   
 
 });
 
@@ -163,6 +167,8 @@ function printList(){
    tabla += "</table>"
   
     document.getElementById('tablaPokemons').innerHTML = tabla;
+	printGrafico();
+	
 }
 
 function refreshPage(){
@@ -252,53 +258,50 @@ let titles = ["id","img","nom","pes"];
 	   tabla += "</table>"
 	  
 		document.getElementById('tablaPokemons').innerHTML = tabla;
+
+	
 }
 
-//CHART
+function printGrafico(){
+	const ctx = document.getElementById('myChart');
 
-function quitandoDuplicadosTipo(array){
-	for(let i=0; i<=array.length; i++){
-		for(let e=0; e<= array[i].length; e++){
-			let tipo = array[i][e].type;
-		}
-	}
+	const data = {
+		labels: arrayLabels,
+		datasets: [{
+		label: 'My First Dataset',
+		data: arrayDadesGraf,
+		backgroundColor: backgroundColor,
+		borderColor: borderColor
+		}]
+		};
+
+		const config = {
+			type: 'doughnut',
+			data: data,
+		  };
+		new Chart(ctx,config);
 }
 
-const data = {
-	labels: [
-	  'Red',
-	  'Green',
-	  'Yellow',
-	  'Grey',
-	  'Blue'
-	],
-	datasets: [{
-	  label: 'My First Dataset',
-	  data: uniqueTypes,
-	  backgroundColor: [
-		'rgb(255, 99, 132)',
-		'rgb(75, 192, 192)',
-		'rgb(255, 205, 86)',
-		'rgb(201, 203, 207)',
-		'rgb(54, 162, 235)'
-	  ]
-	}]
-  };
-new Chart(
-    document.getElementById('myChart'),
-    {
-      type: 'bar',
-      data: {
-        labels: arrayPokemons.map(row => row.pes),
-        datasets: [
-          {
-            label: 'Acquisitions by year',
-            data: arrayPokemons.map(row => row.id)
-          }
-        ]
-      }
-    }
-  );
+
+   //CHART
+
+//    const data = {
+// 	labels: arrayLabels,
+// 	datasets: [{
+// 	  label: 'My Pokemons',
+// 	  data: arrayDadesGraf,
+// 	  backgroundColor: backgroundColor,
+// 	  borderColor: borderColor
+// 	}]
+//   };
+
+ 
+//   const myChart = new Chart(
+// 	document.getElementById('myChart'),
+// 	 config
+// 	);
+
+
 
 	
 
