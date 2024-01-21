@@ -11,14 +11,21 @@
 	<div id="resultat"></div>
 	<script src="js/script.js"></script>
 	<!-- <button onclick="printList()">iniciar</button> -->
-	<button onclick="orderList('desc')">ORDEN desc</button>
-	<button onclick="orderList('asc')">ORDEN asc</button>
+	<label for="tablas">Selecciona una tabla:</label>
+	<select id="tablas" onchange="chooseTable()">
+		<option value="Pokemons" >Pokemons</option>
+		<option value="Peliculas" >Peliculas</option>
+		<option value="Municipis" >Municipis</option>
+		<option value="Meteoritos">Meteoritos</option>
+	</select>
+	<button onclick="orderList('desc','id')">ORDEN desc</button>
+	<button onclick="orderList('asc','id')">ORDEN asc</button>
 	<button onclick="calcMitjana()">media peso</button>
 	<button onclick="refreshPage()">refresh</button>
 	<input placeholder="Enter some value" type="text" value="" id="txtSearch" />
 	<button onclick="searchList()">search</button>
 	<p id="pesoMedio"></p>
-	<div id="tablaPokemons"></div>
+	<div id="tablasmix"></div>
 	<!-- chart -->
 	<div class="chart-container" style="position: relative; width:700px">
 		<canvas id="myChart"></canvas>

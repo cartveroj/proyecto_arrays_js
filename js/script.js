@@ -11,6 +11,18 @@ let equivalencia = "kg";
 let arrayPokemonsType = [];
 let arrayPokemonsTypeClean = [];
 
+let meteorit = {id:"",name:"",mass:"",recclass:"", year:""};
+let arrayMeteoritos =[];
+
+let movie = {title:"",genres:"",year:"",img:"", rating:""};
+let arrayMovies =[];
+
+let municipi = {ine:"",municipi_nom:"",comarca_nom:"",provincia_nom:"", nombre_habitants:""};
+let arrayMunicipis =[];
+
+let arrayTotal = [
+	{Pokemons:[]},{Meteoritos:[]},{Peliculas:[]},{Municipis:[]}
+];
 
 let arrayLabels=[];
 let arrayDadesGraf = [];
@@ -28,8 +40,17 @@ fetch("js/data/earthMeteorites.json")
 		dataObject = {
 			meteorit:element.name, //asignamos los valores a la propiedad del objeto
 		} 
+		meteorit = {
+			id:element.id,
+			name:element.name,
+			mass:element.mass,
+			recclass:element.recclass,
+			year: element.year,
+		}
+		arrayMeteoritos.push(meteorit);
 		dataFinal.push(dataObject); //añadimos al array 
 	});
+	//console.log(arrayMeteoritos);
 
 });
 //MUNICIPIS
@@ -40,11 +61,20 @@ fetch("js/data/municipis.json")
 	let municipis = [];
 	dades.forEach(element=> {
 		municipis.push(element.municipi_nom);
+		municipi = {
+			ine:element.ine,
+			municipi_nom:element.municipi_nom,
+			comarca_nom:element.grup_comarca.comarca_nom,
+			provincia_nom:element.grup_provincia.provincia_nom,
+			nombre_habitants:element.nombre_habitants
+		};
+		arrayMunicipis.push(municipi);
 	});
 	//console.log(municipis.length);
 	municipis.forEach( municipi => {
 		dataFinal.push(municipi);
 	});
+	//console.log(arrayMunicipis);
 });
 
 // MOVIES
@@ -55,10 +85,19 @@ fetch("js/data/movies.json")
 	let movies = [];
 	dades.forEach( element => {
 		movies.push(element.title);
+		movie = {
+			title:element.title,
+			genres:element.genres,
+			year:element.year.toString(),
+			img:element.url,
+			rating:element.rating
+		}
+		arrayMovies.push(movie);
 	});
 	movies.forEach(movie => {
 		dataFinal.push(movie);
 	});
+	//console.log(arrayMovies)
 });
 	
 
@@ -121,64 +160,110 @@ fetch("js/data/pokemon.json")
 	backgroundColor.push(color.replace(")", ",0.2)"));
    });
    console.log(backgroundColor);
-   printList(arrayPokemons);
+  // printList(arrayPokemons);
+  arrayTotal.forEach((tabla)=>{
+	const clave = Object.keys(tabla)[0]; // Obtener la clave del objeto interno
+
+    switch (clave) {
+        case 'Pokemons':
+            tabla[clave] = arrayPokemons;
+            break;
+        case 'Meteoritos':
+            tabla[clave] = arrayMeteoritos;
+            break;
+        case 'Peliculas':
+            tabla[clave] = arrayMovies;
+            break;
+        case 'Municipis':
+            tabla[clave] = arrayMunicipis;
+            break;
+	}
+	// tabla['Pokemons']= arrayPokemons;
+	// tabla['Meteoritos']= arrayMeteoritos;
+	// tabla['Peliculas']= arrayMovies;
+	// tabla['Municipis']= arrayMunicipis;
+  });
+ 
+  console.log(arrayTotal);
 });
 
+function formatFecha(fecha){
+	let fechaObjeto = new Date(fecha)
+	const fechaFormateada = fechaObjeto.toISOString().split("T")[0];
+	return fechaFormateada;
+}
 //EJERCICIO 1
+function chooseTable(){
+	let tabla = document.getElementById("tablas").value;
+	switch (tabla){
+		case 'Pokemons':
+			printList(arrayPokemons);
+			break;
+		case 'Peliculas':
+			printList(arrayMovies);
+			break;
+		case 'Municipis':
+			printList(arrayMunicipis);
+			break;
+		case 'Meteoritos':
+			printList(arrayMeteoritos);
+			break;
+	}
+}
+
 function printList(array){
-	let titles = ["id","img","nom","pes"];
-	let tabla = "<table id = \"miTablaPokemons\" border=1>" ;
 	
-   for (var i = 0; i < array.length+1; i++) {
+	let tableName = document.getElementById("tablas").value;
+	let headers = Object.keys(array[0]);
+
+	let tabla = `<table id="myTabla${tableName}" border=1>`;
+    // Encabezados de la tabla
+    tabla += "<tr>";
+    for (let i = 0; i < headers.length ; i++) {
+        tabla += `<td>${headers[i]}<button class="btnDown" id="down"><img class=${tableName} src=${path} id="${headers[i]}" onclick="changeImage(this)"></button></td>`;
+    }
+    tabla += "</tr>";
+	//contenido de la tabla
+
+   for (var i = 0; i < array.length; i++) {
 		tabla += `<tr>`;
-		
-        for(let j = 0; j < 4; j++){
-			if(i==0){
-				tabla += `<td>${titles[j]}<button class="btnDown" id="down" ><img src=${path} id="${titles[j]}" onclick="changeImage(this)"></button></td>`
+        for(let j = 0; j < headers.length; j++){
+			tabla += "<td>";
+			if( headers[j] == "img"){
+				tabla += `<img src="${array[i][headers[j]]}">`;
 			}else{
-				tabla += `<td>`
-				if(j==0){
-					tabla+=`<p>${array[i-1].id}</p>`
-				}else if(j==1){
-					tabla += ` <img src="${array[i-1].img}" >`
-				}else if(j==2){
-					tabla+=`<p id='nom'>${array[i-1].nom}</p>`
-				}else{
-					tabla += `<p>${array[i-1].pes + equivalencia}</p>`
-				}
-				tabla += `</td>`
+				tabla += `<p>${array[i][headers[j]]}</p>`;
+            	tabla += "</td>";
 			}
             
         }
         tabla +=`</tr>`
    }
-
    tabla += "</table>"
   
-    document.getElementById('tablaPokemons').innerHTML = tabla;
+    document.getElementById('tablasmix').innerHTML = tabla;
 	printGrafico();
 	
 }
 
 function changeImage(element){
-	//console.log(element);
+
+	console.log(element)
 	let orden = "asc";
-	let titles = ["id","nom","pes"];
-	titles.forEach((title)=>{
-		if(title == element.id){
-			let image = document.getElementById(`${title}`);
-			let isDropUp = image.src.match('drop_up');
-			console.log(isDropUp);
-			if (isDropUp && title == element.id) {
-				path = "../img/drop_down.png";
-                orden = "asc";
-            } else {
-				path = "../img/drop_up.png";
-                orden = "desc";
-            }
-			orderList(orden,title);
-		}
-	});
+	let tabla = element.className;
+	let filtro = element.id;
+	let isDropUp = element.src.match('drop_up');
+	//console.log(isDropUp);
+	if (isDropUp) {
+		path = "../img/drop_down.png";
+		orden = "asc";
+	} else {
+		path = "../img/drop_up.png";
+		orden = "desc";
+	}
+	orderList(orden,filtro,tabla);
+		
+
 }
 function refreshPage(){
 	window.location.reload();
@@ -186,39 +271,52 @@ function refreshPage(){
 
 
 
-function orderList(orden, title){
-
+function orderList(orden,filtro,tabla){
 	const sortOrder = orden === "asc" ? 1 : -1;
-	let arrayPokemonsSorted= arrayPokemons.sort((a,b)=>{
-		if (a[title] < b[title]) {
+	let arrayObjectos = arrayTotal.find(obj => obj.hasOwnProperty(`${tabla}`));
+	let arraySorted= arrayObjectos[tabla].sort((a,b)=>{
+		if (a[filtro] < b[filtro]) {
             return -1 * sortOrder;
         }
-        if (a[title] > b[title]) {
+        if (a[filtro] > b[filtro]) {
             return 1 * sortOrder;
         }
         return 0;
 	});
-	printList(arrayPokemonsSorted);
+	printList(arraySorted);
 }
 
 
 
 function searchList(){
+
+	let tabla = document.getElementById("tablas").value;
+
 	let inputSearch = document.getElementById('txtSearch');
 	inputSearch.addEventListener('input', (e) => {
 	console.log(inputSearch.value)
 	});
+
 	let criterio = inputSearch.value;
 	console.log(criterio);
-	let arrayPokemonsMatch = [];
+	let arrayMatch =[];
 	if(criterio.length>0){
-		arrayPokemons.forEach((pokemon)=>{
-			if(pokemon.nom.includes(criterio)){
-				arrayPokemonsMatch.push(pokemon);
+		let arrayObjectos = arrayTotal.find(obj => obj.hasOwnProperty(`${tabla}`));
+		arrayObjectos[tabla].filter( obj => {
+			let valores = Object.values(obj);
+			console.log(typeof(criterio));
+			for(let valor of valores){
+				console.log(valor);
+				if(typeof valor === 'string' && valor.toLowerCase().includes(criterio.toLowerCase())){
+					arrayMatch.push(obj);
+				} else if (Array.isArray(valor) && valor.some(v => typeof v === 'string' && v.toLowerCase().includes(criterio.toLowerCase()))) {
+					arrayMatch.push(obj);
+				}
 			}
 		});
-		if(arrayPokemonsMatch.length >0){
-			printList(arrayPokemonsMatch);
+		console.log(arrayMatch);
+		if(arrayMatch.length > 0){
+			printList(arrayMatch);
 		}else{
 			alert("No hay ninguna coincidencia con esos criterios de busqueda");			
 		}
