@@ -16,6 +16,8 @@ let arrayLabels=[];
 let arrayDadesGraf = [];
 let backgroundColor=[];
 let borderColor=[];
+
+let path = "../img/drop_down.png";
 //EJERCICIO 0
 // METEORITS
 fetch("js/data/earthMeteorites.json")
@@ -119,29 +121,30 @@ fetch("js/data/pokemon.json")
 	backgroundColor.push(color.replace(")", ",0.2)"));
    });
    console.log(backgroundColor);
+   printList(arrayPokemons);
 });
 
 //EJERCICIO 1
-function printList(){
+function printList(array){
 	let titles = ["id","img","nom","pes"];
 	let tabla = "<table id = \"miTablaPokemons\" border=1>" ;
 	
-   for (var i = 0; i < arrayPokemons.length; i++) {
+   for (var i = 0; i < array.length+1; i++) {
 		tabla += `<tr>`;
 		
         for(let j = 0; j < 4; j++){
 			if(i==0){
-				tabla += `<td>${titles[j]}</td>`
+				tabla += `<td>${titles[j]}<button class="btnDown" id="down" ><img src=${path} id="${titles[j]}" onclick="changeImage(this)"></button></td>`
 			}else{
 				tabla += `<td>`
 				if(j==0){
-					tabla+=`<p>${arrayPokemons[i-1].id}</p>`
+					tabla+=`<p>${array[i-1].id}</p>`
 				}else if(j==1){
-					tabla += ` <img src="${arrayPokemons[i-1].img}" >`
+					tabla += ` <img src="${array[i-1].img}" >`
 				}else if(j==2){
-					tabla+=`<p id='nom'>${arrayPokemons[i-1].nom}</p>`
+					tabla+=`<p id='nom'>${array[i-1].nom}</p>`
 				}else{
-					tabla += `<p>${arrayPokemons[i-1].pes + equivalencia}</p>`
+					tabla += `<p>${array[i-1].pes + equivalencia}</p>`
 				}
 				tabla += `</td>`
 			}
@@ -157,31 +160,56 @@ function printList(){
 	
 }
 
+function changeImage(element){
+	//console.log(element);
+	let orden = "asc";
+	let titles = ["id","nom","pes"];
+	titles.forEach((title)=>{
+		if(title == element.id){
+			let image = document.getElementById(`${title}`);
+			let isDropUp = image.src.match('drop_up');
+			console.log(isDropUp);
+			if (isDropUp && title == element.id) {
+				path = "../img/drop_down.png";
+                orden = "asc";
+            } else {
+				path = "../img/drop_up.png";
+                orden = "desc";
+            }
+			orderList(orden,title);
+		}
+	});
+}
 function refreshPage(){
 	window.location.reload();
 }
 
-function orderList(asc){
-	console.log(asc);
-	if(asc === "asc"){
-		
-		let arrayPokemonsAsc = arrayPokemons.sort((a,b)=>{
-			return a.nom.localeCompare(b.nom);
-		});
-		printTable(arrayPokemonsAsc);
-
-	}else{
-		let arrayPokemonsDesc = arrayPokemons.sort((a,b)=>{
-			return b.nom.localeCompare(a.nom);
-		});
-		
-		printTable(arrayPokemonsDesc);
 
 
-	}
+function orderList(orden, title){
+
+	const sortOrder = orden === "asc" ? 1 : -1;
+	let arrayPokemonsSorted= arrayPokemons.sort((a,b)=>{
+		if (a[title] < b[title]) {
+            return -1 * sortOrder;
+        }
+        if (a[title] > b[title]) {
+            return 1 * sortOrder;
+        }
+        return 0;
+	});
+	printList(arrayPokemonsSorted);
 }
+
+
+
 function searchList(){
-	let criterio = prompt("Busqueda por nombre, introduzca el criterio: ");
+	let inputSearch = document.getElementById('txtSearch');
+	inputSearch.addEventListener('input', (e) => {
+	console.log(inputSearch.value)
+	});
+	let criterio = inputSearch.value;
+	console.log(criterio);
 	let arrayPokemonsMatch = [];
 	if(criterio.length>0){
 		arrayPokemons.forEach((pokemon)=>{
@@ -190,7 +218,7 @@ function searchList(){
 			}
 		});
 		if(arrayPokemonsMatch.length >0){
-			printTable(arrayPokemonsMatch);
+			printList(arrayPokemonsMatch);
 		}else{
 			alert("No hay ninguna coincidencia con esos criterios de busqueda");			
 		}
@@ -210,41 +238,16 @@ function calcMitjana(){
 	alert(`La media es: ${media+ equivalencia}`);
 
 }
-function printTable(array){
-let titles = ["id","img","nom","pes"];
-		let tabla = "<table id = \"miTablaPokemons\" border=1>" ;
-	   for (var i = 0; i< array.length+1; i++) {
-			tabla += `<tr>`;
-			
-			for(let j = 0; j < 4; j++){
-				if(i==0){
-					tabla += `<td>${titles[j]}</td>`
-				}else{
-					tabla += `<td>`
-					if(j==0){
-						tabla+=`<p>${array[i-1].id}</p>`
-					}else if(j==1){
-						tabla += ` <img src="${array[i-1].img}" >`
-					}else if(j==2){
-						tabla+=`<p id='nom'>${array[i-1].nom}</p>`
-					}else{
-						tabla += `<p>${arrayPokemons[i-1].pes + equivalencia}</p>`
-					}
-					tabla += `</td>`
-				}
-				
-			}
-			tabla +=`</tr>`
-	   }
-	   tabla += "</table>"
-	   document.getElementById('tablaPokemons').innerHTML = tabla;
 
-	
-}
 
 function printGrafico(){
 	const ctx = document.getElementById('myChart');
-
+	if (ctx) {
+		var chart = Chart.getChart(ctx);
+		if (chart) {
+			chart.destroy();
+		}
+	}
 	const data = {
 		labels: arrayLabels,
 		datasets: [{
