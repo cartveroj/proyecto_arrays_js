@@ -46,11 +46,11 @@ fetch("js/data/earthMeteorites.json")
 			name:element.name,
 			mass:(element.mass != null)?element.mass :"0",
 			recclass:element.recclass,
-			year: element.year.toString().slice(0,element.year.toString().indexOf("T")),/*Modificamos los datos del string para cambiar el formato yy/mm/dd */
 		}
 		arrayMeteoritos.push(meteorit);
 		dataFinal.push(dataObject); //añadimos al array 
 	});
+	console.log(arrayMeteoritos);
 
 });
 
@@ -64,6 +64,7 @@ fetch("js/data/municipis.json")
 		municipis.push(element.municipi_nom);
 		municipi = {
 			ine:element.ine,
+			img:element.municipi_escut,
 			municipi_nom:element.municipi_nom,
 			comarca_nom:element.grup_comarca.comarca_nom,
 			provincia_nom:element.grup_provincia.provincia_nom,
@@ -85,10 +86,10 @@ fetch("js/data/movies.json")
 	dades.forEach( element => {
 		movies.push(element.title);
 		movie = {
+			img:element.url,
 			title:element.title,
 			genres:element.genres,
 			year:element.year.toString(),
-			img:element.url,
 			rating:element.rating
 		}
 		arrayMovies.push(movie);
@@ -178,13 +179,6 @@ fetch("js/data/pokemon.json")
 
 //EJERCICIO 1
 
-// function inicializarPagina() {
-// 	// Deshabilitar los botones al cargar la página
-// 	document.getElementById('media').disabled = true;
-// 	document.getElementById('refresh').disabled = true;
-// 	document.getElementById('search').disabled = true;
-// 	document.getElementById('grafico').disabled = true;
-// }
 
 //funcion que inicia la tabla segun el valor seleccionado
 //inicialmente inicia deshabilitado, solo se activa si selecciona una tabla
@@ -229,9 +223,12 @@ function printList(array){
     // Encabezados de la tabla
     tabla += "<tr>";
     for (let i = 0; i < headers.length ; i++) {
-        tabla += `<td>${headers[i]}<button class="btnDown" id="down"><img class=${tableName} src=${path} id="${headers[i]}" onclick="changeImage(this)"></button></td>`;
+		if(headers[i] ==="img"){
+			tabla += `<td>${headers[i]}</td>`;
+		}else{
+			tabla += `<td>${headers[i]}<button class="btnDown" id="down"><img class=${tableName} src=${path} id="${headers[i]}" onclick="changeImage(this)"></button></td>`;
+		}
     }
-    tabla += "</tr>";
 
 	//contenido de la tabla
    for (var i = 0; i < array.length; i++) {
@@ -240,6 +237,8 @@ function printList(array){
 			tabla += "<td>";
 			if( headers[j] == "img"){
 				tabla += `<img src="${array[i][headers[j]]}">`;
+			}else if(headers[j] == "pes"){
+				tabla += `<p>${array[i][headers[j]]} kg</p>`;
 			}else{
 				tabla += `<p>${array[i][headers[j]]}</p>`;
             	tabla += "</td>";
@@ -248,10 +247,7 @@ function printList(array){
         tabla +=`</tr>`
    }
    tabla += "</table>"
-  
     document.getElementById('tablasmix').innerHTML = tabla;
-	
-	
 }
 
 //funcion que se encarga de cambiar la imagen si se selecciona cambia 
@@ -280,10 +276,12 @@ function refreshPage(){
 
 //Funcion que recibe si el orden si es asc o desc junto con el parametro de la columna 
 function orderList(orden,filtro){
+
 	let tabla = document.getElementById("tablas").value;
 	const sortOrder = orden === "asc" ? 1 : -1;
 	let arrayObjectos = arrayTotal.find(obj => obj.hasOwnProperty(`${tabla}`));
 	let arraySorted= arrayObjectos[tabla].sort((a,b)=>{
+		console.log(a[filtro]);
 		if (a[filtro] < b[filtro]) {
             return -1 * sortOrder;
         }
