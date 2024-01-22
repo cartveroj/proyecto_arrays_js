@@ -5,30 +5,40 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-	<title>Document</title>
+	<title>ArryasConJS</title>
+	<script src="js/script.js"></script>
+	<link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
-	<div id="resultat"></div>
-	<script src="js/script.js"></script>
-	<!-- <button onclick="printList()">iniciar</button> -->
-	<label for="tablas">Selecciona una tabla:</label>
-	<select id="tablas" onchange="chooseTable()">
-		<option value="Pokemons" >Pokemons</option>
-		<option value="Peliculas" >Peliculas</option>
-		<option value="Municipis" >Municipis</option>
-		<option value="Meteoritos">Meteoritos</option>
-	</select>
-	<button onclick="orderList('desc','id')">ORDEN desc</button>
-	<button onclick="orderList('asc','id')">ORDEN asc</button>
-	<button onclick="calcMitjana()">media peso</button>
-	<button onclick="refreshPage()">refresh</button>
-	<input placeholder="Enter some value" type="text" value="" id="txtSearch" />
-	<button onclick="searchList()">search</button>
-	<p id="pesoMedio"></p>
-	<div id="tablasmix"></div>
-	<!-- chart -->
-	<div class="chart-container" style="position: relative; width:700px">
-		<canvas id="myChart"></canvas>
+	<div class="title">
+		<h1>Ejercicio Arrays</h1>
+	</div>
+	<div class="container">	
+		<div id="resultat"></div>
+		<div class="barra">
+			<label for="tablas">Selecciona una tabla:</label>
+			<select id="tablas" onchange="chooseTable()">
+				<option value="default" selected>...</option>
+				<option value="Pokemons" >Pokemons</option>
+				<option value="Peliculas" >Peliculas</option>
+				<option value="Municipis" >Municipis</option>
+				<option value="Meteoritos">Meteoritos</option>
+			</select>
+			<!-- Funcionalidades que se empleaban en versiones anteriores ordenan solo por ID 
+				<button onclick="orderList('desc','id')">ORDEN desc</button>
+			<button onclick="orderList('asc','id',)">ORDEN asc</button> -->
+			<button id="media" disabled onclick="calcMitjana()">media</button>
+			<button id="refresh" disabled  onclick="refreshPage()">refresh</button>
+			<input placeholder="Enter some value" type="text" value="" id="txtSearch" />
+			<button id="search" disabled onclick="searchList()">search</button>
+			<button id="grafico" disabled onclick="printGrafico()">grafico pokemons</button>
+			<p id="pesoMedio"></p>
+		</div>
+		<div id="tablasmix"></div>
+		<!-- chart -->
+		<div class="chart-container" style="position: relative; width:700px">
+			<canvas id="myChart"></canvas>
+		</div>
 	</div>
 </body>
 </html>

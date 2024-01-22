@@ -1,4 +1,5 @@
-	
+	/*Logica de js de tablas empleando arrays */
+
 /*Declaracion de variables globales */
 let dades;
 let dataObject = {name:"",municipi:"",meteorit:"",movie:""};
@@ -7,9 +8,6 @@ let contador = 0;
 
 let pokemons = {id:"",img:"",nom:"",pes:"", type:""};
 let arrayPokemons = [];
-let equivalencia = "kg";
-let arrayPokemonsType = [];
-let arrayPokemonsTypeClean = [];
 
 let meteorit = {id:"",name:"",mass:"",recclass:"", year:""};
 let arrayMeteoritos =[];
@@ -23,13 +21,16 @@ let arrayMunicipis =[];
 let arrayTotal = [
 	{Pokemons:[]},{Meteoritos:[]},{Peliculas:[]},{Municipis:[]}
 ];
-
+/*CHAR */
+let arrayPokemonsTipos = [];
+let arrayPokemonsTiposSorted = [];
 let arrayLabels=[];
 let arrayDadesGraf = [];
 let backgroundColor=[];
 let borderColor=[];
 
 let path = "../img/drop_down.png";
+
 //EJERCICIO 0
 // METEORITS
 fetch("js/data/earthMeteorites.json")
@@ -43,16 +44,16 @@ fetch("js/data/earthMeteorites.json")
 		meteorit = {
 			id:element.id,
 			name:element.name,
-			mass:element.mass,
+			mass:(element.mass != null)?element.mass :"0",
 			recclass:element.recclass,
-			year: element.year,
+			year: element.year.toString().slice(0,element.year.toString().indexOf("T")),/*Modificamos los datos del string para cambiar el formato yy/mm/dd */
 		}
 		arrayMeteoritos.push(meteorit);
 		dataFinal.push(dataObject); //añadimos al array 
 	});
-	//console.log(arrayMeteoritos);
 
 });
+
 //MUNICIPIS
 fetch("js/data/municipis.json")
 .then((response) => response.json())
@@ -70,11 +71,9 @@ fetch("js/data/municipis.json")
 		};
 		arrayMunicipis.push(municipi);
 	});
-	//console.log(municipis.length);
 	municipis.forEach( municipi => {
 		dataFinal.push(municipi);
 	});
-	//console.log(arrayMunicipis);
 });
 
 // MOVIES
@@ -97,7 +96,6 @@ fetch("js/data/movies.json")
 	movies.forEach(movie => {
 		dataFinal.push(movie);
 	});
-	//console.log(arrayMovies)
 });
 	
 
@@ -109,7 +107,7 @@ fetch("js/data/pokemon.json")
 	let pokemones = [];
 	dades.forEach(element => {
 		pokemones[contador] = element.name;
-		arrayPokemonsType.push(element.type);
+		arrayPokemonsTipos.push(element.type);
 		pokemons = {
 			id:element.id,
 			img:element.img,
@@ -125,27 +123,25 @@ fetch("js/data/pokemon.json")
 	});
 
 	arrayPokemons.forEach((arryPok) =>{
-		arrayPokemonsType.push(arryPok);
+		arrayPokemonsTipos.push(arryPok);
 	});
 
 	let indice = 0;
-	for(a=0; a< arrayPokemonsType.length; a++){
-		for(e =0; e < arrayPokemonsType[a].length; e++){
-			arrayPokemonsTypeClean[indice] = arrayPokemonsType[a][e];
+	for(a=0; a< arrayPokemonsTipos.length; a++){
+		for(e =0; e < arrayPokemonsTipos[a].length; e++){
+			arrayPokemonsTiposSorted[indice] = arrayPokemonsTipos[a][e];
 			indice++;
 		}
 	}
-	
+	/*filtramos los valores para sacar un array de tipos sin duplicados */
 	const result = {};
-	arrayPokemonsTypeClean.forEach((value) => {
+	arrayPokemonsTiposSorted.forEach((value) => {
 	result[value] = (result[value] || 0) + 1;
 	});
 	arrayDadesGraf = Object.values(result);
-	console.log(arrayDadesGraf);
-		
-	arrayLabels = [... new Set(arrayPokemonsTypeClean)];
-	console.log(arrayLabels);
+	arrayLabels = [... new Set(arrayPokemonsTiposSorted)];
 
+	/*bucle que forma el array de arrayLabels */
 	let rgb = "rgba(rrr,ggg,bbb)";
    for(let i=0; i< arrayLabels.length;i++){
 	  let rrr= Math.floor(Math.random() * (255 - 0) + 0);
@@ -154,16 +150,13 @@ fetch("js/data/pokemon.json")
 	  rgb = `rgba(${rrr},${ggg},${bbb})`;
 	  borderColor[i]=rgb;
    }
-   console.log(borderColor);
 
    borderColor.forEach((color)=>{
 	backgroundColor.push(color.replace(")", ",0.2)"));
    });
-   console.log(backgroundColor);
-  // printList(arrayPokemons);
+/*Bucle genera un array con clave - valor */
   arrayTotal.forEach((tabla)=>{
-	const clave = Object.keys(tabla)[0]; // Obtener la clave del objeto interno
-
+	const clave = Object.keys(tabla)[0];
     switch (clave) {
         case 'Pokemons':
             tabla[clave] = arrayPokemons;
@@ -178,22 +171,38 @@ fetch("js/data/pokemon.json")
             tabla[clave] = arrayMunicipis;
             break;
 	}
-	// tabla['Pokemons']= arrayPokemons;
-	// tabla['Meteoritos']= arrayMeteoritos;
-	// tabla['Peliculas']= arrayMovies;
-	// tabla['Municipis']= arrayMunicipis;
   });
  
-  console.log(arrayTotal);
 });
 
-function formatFecha(fecha){
-	let fechaObjeto = new Date(fecha)
-	const fechaFormateada = fechaObjeto.toISOString().split("T")[0];
-	return fechaFormateada;
-}
+
 //EJERCICIO 1
+
+// function inicializarPagina() {
+// 	// Deshabilitar los botones al cargar la página
+// 	document.getElementById('media').disabled = true;
+// 	document.getElementById('refresh').disabled = true;
+// 	document.getElementById('search').disabled = true;
+// 	document.getElementById('grafico').disabled = true;
+// }
+
+//funcion que inicia la tabla segun el valor seleccionado
+//inicialmente inicia deshabilitado, solo se activa si selecciona una tabla
 function chooseTable(){
+
+	const selectOpciones = document.getElementById('tablas');
+	const btnMedia = document.getElementById('media');
+	const btnRefresh = document.getElementById('refresh');
+	const btnSearch = document.getElementById('search');
+	const btnGrafico = document.getElementById('grafico');
+	//verificamos que el valor se diferente a "default"
+	let seleccion = selectOpciones.value !== "default";
+	btnMedia.disabled = !seleccion;
+	btnRefresh.disabled = !seleccion;
+	btnSearch.disabled = !seleccion;
+	btnGrafico.disabled = !seleccion;
+
+	//segun el valor seleccionado pasamos el array correspondiente a la funcion printList
 	let tabla = document.getElementById("tablas").value;
 	switch (tabla){
 		case 'Pokemons':
@@ -211,10 +220,10 @@ function chooseTable(){
 	}
 }
 
+//Funcion que segun el tipo de array printa la tabla
 function printList(array){
-	
 	let tableName = document.getElementById("tablas").value;
-	let headers = Object.keys(array[0]);
+	let headers = Object.keys(array[0]); //recuperamos las keys de los objetos para poner en los encabezados
 
 	let tabla = `<table id="myTabla${tableName}" border=1>`;
     // Encabezados de la tabla
@@ -223,8 +232,8 @@ function printList(array){
         tabla += `<td>${headers[i]}<button class="btnDown" id="down"><img class=${tableName} src=${path} id="${headers[i]}" onclick="changeImage(this)"></button></td>`;
     }
     tabla += "</tr>";
-	//contenido de la tabla
 
+	//contenido de la tabla
    for (var i = 0; i < array.length; i++) {
 		tabla += `<tr>`;
         for(let j = 0; j < headers.length; j++){
@@ -235,25 +244,22 @@ function printList(array){
 				tabla += `<p>${array[i][headers[j]]}</p>`;
             	tabla += "</td>";
 			}
-            
         }
         tabla +=`</tr>`
    }
    tabla += "</table>"
   
     document.getElementById('tablasmix').innerHTML = tabla;
-	printGrafico();
+	
 	
 }
 
+//funcion que se encarga de cambiar la imagen si se selecciona cambia 
+//de ascendente a descendente y el filtro que es por el header que se selecciona 
 function changeImage(element){
-
-	console.log(element)
 	let orden = "asc";
-	let tabla = element.className;
-	let filtro = element.id;
+	let filtro = element.id; // header -> id/nom/
 	let isDropUp = element.src.match('drop_up');
-	//console.log(isDropUp);
 	if (isDropUp) {
 		path = "../img/drop_down.png";
 		orden = "asc";
@@ -261,17 +267,20 @@ function changeImage(element){
 		path = "../img/drop_up.png";
 		orden = "desc";
 	}
-	orderList(orden,filtro,tabla);
+	orderList(orden,filtro);
 		
 
 }
+
+//funcion que se encarga de refrescar la página
 function refreshPage(){
 	window.location.reload();
 }
 
 
-
-function orderList(orden,filtro,tabla){
+//Funcion que recibe si el orden si es asc o desc junto con el parametro de la columna 
+function orderList(orden,filtro){
+	let tabla = document.getElementById("tablas").value;
 	const sortOrder = orden === "asc" ? 1 : -1;
 	let arrayObjectos = arrayTotal.find(obj => obj.hasOwnProperty(`${tabla}`));
 	let arraySorted= arrayObjectos[tabla].sort((a,b)=>{
@@ -287,36 +296,31 @@ function orderList(orden,filtro,tabla){
 }
 
 
-
+//funcion que se encarga de buscar segun un criterio introducido 
 function searchList(){
-
 	let tabla = document.getElementById("tablas").value;
-
 	let inputSearch = document.getElementById('txtSearch');
 	inputSearch.addEventListener('input', (e) => {
 	console.log(inputSearch.value)
 	});
 
 	let criterio = inputSearch.value;
-	console.log(criterio);
 	let arrayMatch =[];
+	//verificamos que se introduzca algun valor en el buscador 
 	if(criterio.length>0){
-		let arrayObjectos = arrayTotal.find(obj => obj.hasOwnProperty(`${tabla}`));
+		let arrayObjectos = arrayTotal.find(obj => obj.hasOwnProperty(`${tabla}`)); // filtramos por el tipo de tabla los arrays
 		arrayObjectos[tabla].filter( obj => {
 			let valores = Object.values(obj);
-			console.log(typeof(criterio));
-			for(let valor of valores){
-				console.log(valor);
-				if(typeof valor === 'string' && valor.toLowerCase().includes(criterio.toLowerCase())){
+			for(let valor of valores){ //recorremos el array
+				if(typeof valor === 'string' && valor.toLowerCase().includes(criterio.toLowerCase())){ // verificamos que sea string
 					arrayMatch.push(obj);
-				} else if (Array.isArray(valor) && valor.some(v => typeof v === 'string' && v.toLowerCase().includes(criterio.toLowerCase()))) {
+				} else if (Array.isArray(valor) && valor.some(v => typeof v === 'string' && v.toLowerCase().includes(criterio.toLowerCase()))) { // hace busquedas si contiene array dentro de las propiedades
 					arrayMatch.push(obj);
 				}
 			}
 		});
-		console.log(arrayMatch);
 		if(arrayMatch.length > 0){
-			printList(arrayMatch);
+			printList(arrayMatch); // con los valores en coincidencia mostramos el array 
 		}else{
 			alert("No hay ninguna coincidencia con esos criterios de busqueda");			
 		}
@@ -326,19 +330,53 @@ function searchList(){
 	}
 }
 
+//Funcion que se encarga de calcular la media de ciertas propiedades de los objetos
+//de la tabla seleccionada
 function calcMitjana(){
+	let tabla = document.getElementById("tablas").value;
 	let suma = 0;
 	let media = 0;
-	arrayPokemons.forEach((pokemon)=>{
-		suma += parseInt(pokemon.pes);
-	});
-	media = (suma/arrayPokemons.length).toFixed(2);
-	alert(`La media es: ${media+ equivalencia}`);
+	let criterio ="";
+	switch (tabla){
+		case 'Pokemons':
+			arrayPokemons.forEach((pokemon)=>{
+				suma += parseInt(pokemon.pes); //segun el peso
+			});
+			media = (suma/arrayPokemons.length).toFixed(2);
+			criterio= "pes";
+			break;
+		case 'Peliculas':
+			arrayMovies.forEach((movie)=>{
+				suma += parseInt(movie.rating);//segun el rating
+			});
+			media = (suma/arrayMovies.length).toFixed(2);
+			criterio= "rating";
+			break;
+		case 'Municipis':
+			arrayMunicipis.forEach((municipi)=>{
+				suma += parseInt(municipi.nombre_habitants); //segun numero de habitantes
+			});
+			media = (suma/arrayMunicipis.length).toFixed(2);
+			criterio= "numero de habitantes";
+			break;
+		case 'Meteoritos':
+			arrayMeteoritos.forEach((meteoro)=>{
+				suma += parseInt(meteoro.mass); //segun la masa
+			});
+			media = (suma/arrayMeteoritos.length).toFixed(2);
+			criterio= "masa";
+			break;
+	}
+	
+	//notificamos a traves del alert
+	alert(`${tabla} la media de ${criterio} es: ${media}`);
 
 }
 
-
+//Funcion que se encarga de mostrar el grafico de pokemons 
+//empleando la libreria de Chart.js
 function printGrafico(){
+	document.querySelector("table").innerHTML="";
 	const ctx = document.getElementById('myChart');
 	if (ctx) {
 		var chart = Chart.getChart(ctx);
@@ -349,7 +387,7 @@ function printGrafico(){
 	const data = {
 		labels: arrayLabels,
 		datasets: [{
-		label: 'My First Dataset',
+		label: 'My First Dataset Pokemons',
 		data: arrayDadesGraf,
 		backgroundColor: backgroundColor,
 		borderColor: borderColor
@@ -357,7 +395,7 @@ function printGrafico(){
 		};
 
 		const config = {
-			type: 'doughnut',
+			type: 'polarArea',
 			data: data,
 		  };
 		new Chart(ctx,config);

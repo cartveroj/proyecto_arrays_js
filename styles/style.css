@@ -1,4 +1,23 @@
-.btnDown{
-    height: 10px;
-    width: 10px;
+
+/*Archivo de estilos*/
+
+.title{
+    text-align: center;
+    padding: 10px;
 }
+#tablasmix{
+    display: flex; 
+    align-items: center;  /*Centrar horizontalmente */
+    justify-content: center; 
+}
+
+.barra {
+    display: flex;
+    flex-wrap: wrap; /* Permitir que los elementos se envuelvan en varias líneas si no caben en una sola línea */
+    align-items: center;
+    justify-content: center; /* Centrar los elementos verticalmente */
+    gap: 10px; /* Espacio entre los elementos */
+}
+
+
+   
